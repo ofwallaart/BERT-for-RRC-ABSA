@@ -5,8 +5,8 @@ BASELINE=$2
 GPU=$3
 
 
-. ~/anaconda3/etc/profile.d/conda.sh
-conda activate p3-torch13
+#. "C:\Users\olafw\anaconda3\etc\profile.d\conda.sh"
+conda activate BERT-for-RRC-ABSA
 
 export CUDA_VISIBLE_DEVICES=${GPU}
 
@@ -29,8 +29,8 @@ mkdir -p ${OUTPUT_DIR}
 
 
 python src/pt.py \
-    --output_dir ${OUTPUT_DIR} \
-    --model_type ${MODEL_TYPE} \
+    --output_dir "${OUTPUT_DIR}" \
+    --model_type "${MODEL_TYPE}" \
     --model_name_or_path ${MODEL_NAME} \
     --do_train \
     --train_data_file data/pt/domain_v2_train.txt \

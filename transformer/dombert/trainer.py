@@ -18,7 +18,6 @@ except:
 
 from tqdm import tqdm, trange
 from transformers import AdamW, get_linear_schedule_with_warmup
-from torch.optim import Adamax
 from apex import amp
 
 from .util import set_seed, load_and_cache_examples
@@ -39,7 +38,7 @@ class Trainer(object):
 
     def _forward(self, args, inputs, labels, masker, model, backprop=True):
         outputs = model(inputs, masked_lm_labels=labels) if args.mlm else model(inputs, labels=labels)
-        loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
+        loss = outputs[0]  # model outputs are always tuple in transformer (see doc)
         if backprop:
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training
@@ -123,7 +122,7 @@ class Trainer(object):
     def _train_epoch(self, args, epoch_id, epoch_iterator, train_masker, eval_dataset, eval_masker, model):
         for step, batch in enumerate(epoch_iterator):
             # consume this example also consume randomness.
-            inputs, labels = train_masker.mask_tokens(batch, args.mlm_probability) if args.mlm else (batch, batch)
+            inputs, labels = train_masker.mask_tokens(batch, model, args.mlm_probability, self.global_step % args.logging_steps == 0) if args.mlm else (batch, batch)
             if epoch_id < self.epochs_trained:
                 logger.info("Continue training: skip epoch %d", epoch_id)
                 break
@@ -175,7 +174,6 @@ class Trainer(object):
             ]
         
         self.optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, correct_bias=False)
-        
         self.scheduler = get_linear_schedule_with_warmup(self.optimizer, num_warmup_steps = args.warmup_steps, num_training_steps=t_total)
         
         if (
@@ -249,7 +247,7 @@ class Trainer(object):
         nb_eval_steps = 0
 
         for batch in tqdm(eval_dataloader, desc="Evaluating"):
-            inputs, labels = eval_masker.mask_tokens(batch, 0.15) if args.mlm else (batch, batch)
+            inputs, labels = eval_masker.mask_tokens(batch, model, 0.15) if args.mlm else (batch, batch)
             inputs = self._to(args, inputs)
             labels = self._to(args, labels)
 

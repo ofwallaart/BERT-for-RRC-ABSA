@@ -7,7 +7,7 @@ We found that BERT domain post-training (e.g, 1 day of training) is an economic 
 [Code base](analab.md) for "Understanding Pre-trained BERT for Aspect-based Sentiment Analysis" is released.  
 [Code base](transformers.md) on huggingface `transformers` is under `transformers`, with more cross-domain models.  
 Preprocessing ABSA xmls organized into a separate [rep](https://github.com/howardhsu/ABSA_preprocessing).  
-Want to have post-trained models for other domains in reviews ? checkout a [cross-domain review BERT](transformers/amazon_yelp.md) or download from [HERE](https://drive.google.com/file/d/1YbiI9W3acj4d9JbCbu_SmRjz_tNyShYV/view?usp=sharing).   
+Want to have post-trained models for other domains in reviews ? checkout a [cross-domain review BERT](transformer/amazon_yelp.md) or download from [HERE](https://drive.google.com/file/d/1YbiI9W3acj4d9JbCbu_SmRjz_tNyShYV/view?usp=sharing).   
 A conversational dataset of RRC can be found [here](https://github.com/howardhsu/RCRC).  
 If you only care about ASC, a more formal code base can be found in a [similar rep](https://github.com/howardhsu/ASC_failure) focusing on ASC.
 **feedbacks are welcomed for missing instructions **

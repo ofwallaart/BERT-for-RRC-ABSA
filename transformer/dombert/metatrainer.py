@@ -94,7 +94,7 @@ class DomainSampler(Sampler):
 class MetaTrainer(Trainer):
     def _forward(self, args, inputs, labels, masker, model, backprop=True):
         outputs = model(inputs, masked_lm_labels=labels, target_loss=self.meta_model.target_loss) if args.mlm else model(inputs, labels=labels)
-        loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
+        loss = outputs[0]  # model outputs are always tuple in transformer (see doc)
         if backprop:
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training

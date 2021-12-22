@@ -9,7 +9,7 @@ from transformers import (
     BertForTokenClassification,
 )
 
-# remove this in future if transformers implemented a TokenClassification class.
+# remove this in future if transformer implemented a TokenClassification class.
 from .modeling import *
 
 from . import absa_data_util as data_util

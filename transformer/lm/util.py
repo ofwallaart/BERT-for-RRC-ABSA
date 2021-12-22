@@ -63,7 +63,7 @@ class TextDataset(Dataset):
 
             
 class XDDataset(TextDataset):
-    def __init__(self, model_type, masker, tokenizer, file_path='train', block_size=512):
+    def __init__(self, model_type, tokenizer, file_path='train', block_size=512):
         assert os.path.isfile(file_path)
         model_type = model_type.split("-")[0]
         directory, filename = os.path.split(file_path)
@@ -139,6 +139,11 @@ class XDDataset(TextDataset):
             logger.info("Saving features into cached file.")
             np.save(cached_features_file, self.examples)
 
-def load_and_cache_examples(dataset_cls, args, masker, tokenizer, evaluate=False):
-    dataset = dataset_cls(args.model_type, masker, tokenizer, file_path=args.eval_data_file if evaluate else args.train_data_file, block_size=args.block_size)
+def load_and_cache_examples(dataset_cls, args, tokenizer, evaluate=False):
+    if evaluate:
+        file_path = args.eval_data_file
+    else:
+        file_path = args.train_data_file
+    print(file_path)
+    dataset = dataset_cls(args.model_type, tokenizer, file_path=file_path, block_size=args.block_size)
     return dataset
