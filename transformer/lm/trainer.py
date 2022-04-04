@@ -5,6 +5,7 @@ import random
 
 import numpy as np
 import torch
+from torch.cuda.amp import autocast
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
 import glob
@@ -19,7 +20,6 @@ except:
 from tqdm import tqdm, trange
 from transformers import AdamW, get_linear_schedule_with_warmup
 from torch.optim import Adamax
-from apex import amp
 
 from .util import set_seed, load_and_cache_examples
 
@@ -37,6 +37,7 @@ class Trainer(object):
     def _post_step(self, args, outputs):
         pass
 
+    @autocast()
     def _forward(self, args, inputs, labels, masker, model, backprop=True):
         outputs = model(inputs, masked_lm_labels=labels) if args.mlm else model(inputs, labels=labels)
         loss = outputs[0]  # model outputs are always tuple in transformer (see doc)
@@ -46,11 +47,11 @@ class Trainer(object):
             if args.gradient_accumulation_steps > 1:
                 loss = loss / args.gradient_accumulation_steps
 
-            if args.fp16:
-                with amp.scale_loss(loss, self.optimizer) as scaled_loss:
-                    scaled_loss.backward()
-            else:
-                loss.backward()
+            #if args.fp16:
+            #    with torch.cuda.amp.scale_loss(loss, self.optimizer) as scaled_loss:
+            #        scaled_loss.backward()
+            #else:
+            loss.backward()
             self._post_step(args, outputs)
             return loss
         else:
@@ -83,7 +84,7 @@ class Trainer(object):
         self.tr_loss += loss.item()
         if (step + 1) % args.gradient_accumulation_steps == 0:
             if args.fp16:
-                torch.nn.utils.clip_grad_norm_(amp.master_params(self.optimizer), args.max_grad_norm)
+                torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             else:
                 torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
             self.optimizer.step()
@@ -187,8 +188,8 @@ class Trainer(object):
             self.optimizer.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "optimizer.pt")))
             self.scheduler.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "scheduler.pt")))
 
-        if args.fp16:
-            model, self.optimizer = amp.initialize(model, self.optimizer, opt_level=args.fp16_opt_level)
+        #if args.fp16:
+         #   model, self.optimizer = torch.cuda.amp.initialize(model, self.optimizer, opt_level=args.fp16_opt_level)
 
         # multi-gpu training (should be after apex fp16 initialization)
         if args.n_gpu > 1:

@@ -4,11 +4,11 @@ import torch
 import torch.nn as nn
 from torch.nn import CrossEntropyLoss, MSELoss
 
-from transformers.configuration_roberta import RobertaConfig
+from transformers import RobertaConfig
 from transformers.file_utils import add_start_docstrings
-from transformers.modeling_bert import BertEmbeddings, BertLayerNorm, BertModel, BertPreTrainedModel, BertPredictionHeadTransform, BertOnlyMLMHead, BertEncoder, BertPooler, gelu
-from transformers.modeling_roberta import RobertaLMHead, RobertaModel, ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP, ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING 
-from transformers.modeling_distilbert import DistilBertPreTrainedModel, DistilBertModel
+from transformers.models.bert.modeling_bert import BertEmbeddings, BertModel, BertPreTrainedModel, BertPredictionHeadTransform, BertOnlyMLMHead, BertEncoder, BertPooler
+# from transformers.models.bert.modeling_roberta import RobertaLMHead, RobertaModel, ROBERTA_PRETRAINED_MODEL_ARCHIVE_MAP, ROBERTA_START_DOCSTRING, ROBERTA_INPUTS_DOCSTRING 
+from transformers import DistilBertPreTrainedModel, DistilBertModel
 from transformers import RobertaForMaskedLM
 
 logger = logging.getLogger(__name__)

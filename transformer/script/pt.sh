@@ -3,41 +3,34 @@
 MODEL_TYPE=$1
 BASELINE=$2
 GPU=$3
-
-
-#. "C:\Users\olafw\anaconda3\etc\profile.d\conda.sh"
-conda activate BERT-for-RRC-ABSA
+FOLDER=$4
 
 export CUDA_VISIBLE_DEVICES=${GPU}
 
 export PYTHONPATH="${PYTHONPATH}:./"
 
-MODEL_NAME=bert-base-uncased
-
-BATCH_SIZE=36
-
+MODEL_NAME=GroNLP/bert-base-dutch-cased
+BATCH_SIZE=16
 ACCUM=8
-
 
 echo batch_size ${BATCH_SIZE} accum ${ACCUM}
 
-
-OUTPUT_DIR=./pt_runs/pt_${MODEL_TYPE}-${BASELINE}
-
+OUTPUT_DIR=${FOLDER}/pt_${MODEL_TYPE}-${BASELINE}
+TRAIN_FILE=${FOLDER}/domain_train.txt
+EVAL_FILE=${FOLDER}/domain_dev.txt
 
 mkdir -p ${OUTPUT_DIR}
 
-
-python src/pt.py \
+python ../src/pt.py \
     --output_dir "${OUTPUT_DIR}" \
     --model_type "${MODEL_TYPE}" \
     --model_name_or_path ${MODEL_NAME} \
     --do_train \
-    --train_data_file data/pt/domain_v2_train.txt \
+    --train_data_file ${TRAIN_FILE} \
     --per_gpu_train_batch_size ${BATCH_SIZE} \
     --gradient_accumulation_steps ${ACCUM} \
     --do_eval \
-    --eval_data_file data/pt/domain_v2_dev.txt \
+    --eval_data_file ${EVAL_FILE} \
     --per_gpu_eval_batch_size ${BATCH_SIZE} \
     --evaluate_during_training \
     --do_lower_case \
@@ -53,7 +46,7 @@ python src/pt.py \
     --save_steps 500 \
     --logging_steps 500 \
     --save_total_limit 1 \
-    --num_train_epochs 4.0 \
+    --num_train_epochs 6.0 \
     --fp16 \
     --fp16_opt_level O2 \
     2>&1 | tee ${OUTPUT_DIR}/train.log

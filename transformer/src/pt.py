@@ -18,13 +18,15 @@ Fine-tuning the library models for language modeling on a text file (GPT, GPT-2,
 GPT and GPT-2 are fine-tuned using a causal language modeling (CLM) loss while BERT and RoBERTa are fine-tuned
 using a masked language modeling (MLM) loss.
 """
-
 from __future__ import absolute_import, division, print_function
 
 import argparse
 import glob
 import torch
 import os
+
+import sys
+sys.path.append('/Workspace/Repos/pnl0nn8f@emea.royalahold.net/BERT-for-RRC-ABSA/transformer')
 
 try:
     from torch.utils.tensorboard import SummaryWriter
